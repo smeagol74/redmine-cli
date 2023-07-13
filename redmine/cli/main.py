@@ -432,6 +432,7 @@ def open(redmine, issue_id):
 @click.option(OPTIONS["from"]["long"], default=None)
 @click.option(OPTIONS["to"]["long"], default=None)
 @click.option(OPTIONS["on"]["long"], default=None)
+@click.option(OPTIONS["query"]["long"], OPTIONS["query"]["short"], default=None)
 @click.pass_obj
 def times(redmine, **kwargs):
     """ List spent times """
@@ -449,6 +450,7 @@ def times(redmine, **kwargs):
                 "project_id": kwargs.get("project"),
                 "from": kwargs.get("from"),
                 "to": kwargs.get("to"),
+                "query_id": kwargs.get("query")
             },
         )
     except HTTPError as e:

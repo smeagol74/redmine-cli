@@ -38,7 +38,7 @@ class Journal:
         return self.get_header() + self.get_notes() + self.get_details()
 
     def get_header(self):
-        created_on = datetime.strptime(self.created_on, "%Y-%m-%dT%H:%M:%SZ")
+        created_on = datetime.fromisoformat(self.created_on)
         created_on = created_on.strftime("%Y-%m-%d %H:%M")
 
         return f"\n• {created_on} {self.user['name']}\n\n"

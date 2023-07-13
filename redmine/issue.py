@@ -1,8 +1,10 @@
+import shutil
 from collections import defaultdict
 from datetime import datetime
 from textwrap import wrap
 
 from redmine.journal import Journal
+import click
 
 
 class Issue:
@@ -40,7 +42,7 @@ class Issue:
     def get_header(self):
         header = f"Issue #{self.id} - {self.subject}\n\n"
 
-        created_on = datetime.strptime(self.created_on, "%Y-%m-%dT%H:%M:%SZ")
+        created_on = datetime.fromisoformat(self.created_on)
         header += (
             f"Reported by {self.author['name']} on "
             f"{created_on.date()} {created_on.time()}\n\n"
@@ -82,14 +84,26 @@ class Issue:
 
         return journals
 
-    def as_row(self, show_assignee=True, show_project=True):
-        row = f"{self.id:>6} "
-        row += f"{self.project['name']:21.20} "
-        row += f"{self.priority['name']:<8} "
-        row += f"{self.status['name']:<19} "
-        row += f"{self.done_ratio:>3}% "
-        row += f"{self.assigned_to['name']:<21.20} "
-        row += f"{self.subject:<61.60} "
+    def as_row(self, show_assignee=False, show_project=True, show_priority=False, show_status=False, show_done_ratio=False, width=None):
+        row = click.style(f"{self.id:>6} ", fg='green')
+        l = width if width else shutil.get_terminal_size()[0]
+        if show_project:
+            row += f"{self.project['name']:21.20} "
+            l -= 23
+        if show_priority:
+            row += f"{self.priority['name']:<8} "
+            l -= 9
+        if show_status:
+            row += f"{self.status['name']:<19} "
+            l -= 20
+        if show_done_ratio:
+            row += f"{self.done_ratio:>3}% "
+            l -= 5
+        if show_assignee:
+            row += f"{self.assigned_to['name']:<21} "
+            l -= 22
+        l -= 6
+        row += f"{self.subject:<{l}.{l}}"
 
         return row
 
